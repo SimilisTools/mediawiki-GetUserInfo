@@ -21,82 +21,43 @@
  */
 
 if ( !defined( 'MEDIAWIKI' ) ) {
-    echo "Not a valid entry point";
-    exit( 1 );
+	echo "Not a valid entry point";
+	exit( 1 );
 }
 
+//self executing anonymous function to prevent global scope assumptions
+call_user_func( function() {
 
-// At first, only allow to sysop to be checked
-$wgGUAllowedGroups['email'] = array('sysop');
-$wgGUAllowedGroups['realname'] = array('sysop');
-$wgGUAllowedGroups['groups'] = array('sysop');
-$wgGURestrictInOwnUserPage[] = false;
-// WhiteListPages
-$wgGUWhiteListPages['email'] = array();
-$wgGUWhiteListPages['realname'] = array();
-$wgGUWhiteListPages['groups'] = array();
+	// At first, only allow to sysop to be checked
+	$GLOBALS['wgGUAllowedGroups']['email'] = array('sysop');
+	$GLOBALS['wgGUAllowedGroups']['realname'] = array('sysop');
+	$GLOBALS['wgGUAllowedGroups']['groups'] = array('sysop');
+	// WhiteListPages
+	$GLOBALS['wgGUWhiteListPages']['email'] = array();
+	$GLOBALS['wgGUWhiteListPages']['realname'] = array();
+	$GLOBALS['wgGUWhiteListPages']['groups'] = array();
+	// TODO: Add option of only you're the actual user, etc.
+	
+	$GLOBALS['wgExtensionCredits']['parserhook'][] = array(
+		'path' => __FILE__,
+		'name' => 'GetUserInfo',
+		'author' => 'Toni Hermoso',
+		'version' => '0.1',
+		'url' => 'https://www.mediawiki.org/wiki/Extension:GetUserInfo',
+		'descriptionmsg' => 'getuserinfo-desc',
+	);
+	
+	$GLOBALS['wgAutoloadClasses']['ExtGetUserInfo'] = dirname(__FILE__) . '/GetUserInfo_body.php';
+	$GLOBALS['wgExtensionMessagesFiles']['GetUserInfo'] = dirname( __FILE__ ) . '/GetUserInfo.i18n.php';
+	$GLOBALS['wgExtensionMessagesFiles']['GetUserInfoMagic'] = dirname(__FILE__) . '/GetUserInfo.i18n.magic.php';
+	$GLOBALS['wgHooks']['ParserFirstCallInit'][] = 'wfRegisterGetUserInfo';
 
+});
 
-$wgExtensionFunctions[] = 'wfSetupGetUserInfo';
-$wgExtensionCredits['parserhook'][] = array(
-        'path' => __FILE__,
-        'name' => 'GetUserInfo',
-        'author' => 'Toni Hermoso',
-        'version' => '0.1',
-        'url' => 'http://www.mediawiki.org/wiki/Extension:GetUserInfo',
-        'descriptionmsg' => 'getuserinfo-desc',
-);
+function wfRegisterGetUserInfo() {
 
-$wgAutoloadClasses['ExtGetUserInfo'] = dirname(__FILE__) . '/GetUserInfo_body.php';
-$wgExtensionMessagesFiles['GetUserInfo'] = dirname( __FILE__ ) . '/GetUserInfo.i18n.php';
-$wgExtensionMessagesFiles['GetUserInfoMagic'] = dirname(__FILE__) . '/GetUserInfo.i18n.magic.php';
+	$parser->setFunctionHook( 'getuserinfo', 'ExtGetUserInfo::getUserInfo', Parser::SFH_OBJECT_ARGS );
 
-
-function wfSetupGetUserInfo() {
-	global $wgGUHookStub, $wgHooks;
-
-	$wgGUHookStub = new GetUserInfo_HookStub;
-
-	$wgHooks['ParserFirstCallInit'][] = array( &$wgGUHookStub, 'registerParser' );
-	$wgHooks['ParserClearState'][] = array( &$wgGUHookStub, 'clearState' );
+	return true;
 }
 
-/**
- * Stub class to defer loading of the bulk of the code until a User function is
- * actually used.
- */
-class GetUserInfo_HookStub {
-
-        var $realObj;
-	/**
-	 * @param $parser Parser
-	 * @return bool
-	 */
-	function registerParser( &$parser ) {
-            // Can be filtered at the parser level, current user group and page
-	    $parser->setFunctionHook( 'getuserinfo',  array(&$this, 'getuserinfo') );
-	    return true;
-        
-	}
-
-	/**
-	 * Defer ParserClearState
-	 */
-	function clearState( &$parser ) {
-		if ( !is_null( $this->realObj ) ) {
-			$this->realObj->clearState( $parser );
-		}
-		return true;
-	}
-
-	/**
-	 * Pass through function call
-	 */
-	function __call( $name, $args ) {
-		if ( is_null( $this->realObj ) ) {
-			$this->realObj = new ExtGetUserInfo;
-			$this->realObj->clearState( $args[0] );
-		}
-		return call_user_func_array( array( $this->realObj, $name ), $args );
-	}
-}
