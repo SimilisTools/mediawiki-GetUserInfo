@@ -32,11 +32,20 @@ call_user_func( function() {
 	$GLOBALS['wgGUAllowedGroups']['email'] = array('sysop');
 	$GLOBALS['wgGUAllowedGroups']['realname'] = array('sysop');
 	$GLOBALS['wgGUAllowedGroups']['groups'] = array('sysop');
+
+	// WhiteListNS
+	$GLOBALS['wgGUWhiteListNS']['email'] = array();
+	$GLOBALS['wgGUWhiteListNS']['realname'] = array();
+	$GLOBALS['wgGUWhiteListNS']['groups'] = array();
+
 	// WhiteListPages
 	$GLOBALS['wgGUWhiteListPages']['email'] = array();
 	$GLOBALS['wgGUWhiteListPages']['realname'] = array();
 	$GLOBALS['wgGUWhiteListPages']['groups'] = array();
-	// TODO: Add option of only you're the actual user, etc.
+	
+	$GLOBALS['wgGUOnlyActualUser'] = false;
+	$GLOBALS['wgGUOnlyUserPage'] = false;
+
 	
 	$GLOBALS['wgExtensionCredits']['parserhook'][] = array(
 		'path' => __FILE__,
