@@ -77,7 +77,7 @@ class ExtGetUserInfo {
 		}
 		
 		# Check pages
-		if ( in_array( $fulltext, array_map( self::allWS, $wgGUWhiteListPages[ $param2 ] ) ) ) {
+		if ( in_array( $fulltext, array_map( "self::allWS", $wgGUWhiteListPages[ $param2 ] ) ) ) {
 			$ingroup = true;
 		}
 
