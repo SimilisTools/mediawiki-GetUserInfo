@@ -64,7 +64,7 @@ call_user_func( function() {
 
 });
 
-function wfRegisterGetUserInfo() {
+function wfRegisterGetUserInfo( $parser ) {
 
 	$parser->setFunctionHook( 'getuserinfo', 'ExtGetUserInfo::getUserInfo', Parser::SFH_OBJECT_ARGS );
 
