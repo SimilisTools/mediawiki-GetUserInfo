@@ -34,6 +34,7 @@ call_user_func( function() {
 	$GLOBALS['wgGUAllowedGroups']['groups'] = array('sysop');
 
 	// WhiteListNS
+	// This should be stored as NS_USER or so...
 	$GLOBALS['wgGUWhiteListNS']['email'] = array();
 	$GLOBALS['wgGUWhiteListNS']['realname'] = array();
 	$GLOBALS['wgGUWhiteListNS']['groups'] = array();
@@ -52,7 +53,7 @@ call_user_func( function() {
 		'name' => 'GetUserInfo',
 		'author' => 'Toni Hermoso',
 		'version' => '0.1',
-		'url' => 'https://www.mediawiki.org/wiki/Extension:GetUserInfo',
+		'url' => 'https://github.com/SimilisTools/mediawiki-GetUserInfo',
 		'descriptionmsg' => 'getuserinfo-desc',
 	);
 	

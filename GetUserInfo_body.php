@@ -1,6 +1,6 @@
 <?php
 /*
- * 2011-2014
+ * 2011-2015
  * Provides user email or real name information
  *
 */
@@ -52,17 +52,18 @@ class ExtGetUserInfo {
 		
 		$user = $wgUser;
 
-		// Get title of page
+		// Get title and NS of page
 		$titlepage = $parser->getTitle();
+		$namespace = $titlepage->getNamespace();
+		$fulltext  = $titlepage->getFullText();
+		$titletext = $titlepage->getText();
 	
 		// Can be filtered at the parser level, current user group and page
 
 		$cur_gps = $user->getEffectiveGroups();
 		
 		$ingroup = false;
-		
-		// TODO: Play with priorities here
-		
+
 		foreach ( $cur_gps as $cur_gp ) {
 			if ( in_array( $cur_gp, $wgGUAllowedGroups[ $param2 ] ) ) {
 				$ingroup = true;
@@ -70,13 +71,28 @@ class ExtGetUserInfo {
 			}
 		}
 
-		if ( in_array( $titlepage, $wgGUWhiteListPages[ $param2 ] ) ) {
+		# Check NS
+		if ( in_array( $namespace, $wgGUWhiteListNS[ $param2 ] ) ) {
+			$ingroup = true;
+		}
+		
+		# Check pages
+		if ( in_array( $fulltext, array_map( self::allWS, $wgGUWhiteListPages[ $param2 ] ) ) ) {
 			$ingroup = true;
 		}
 
-		// If show only in user page
+		// If true show only if the same user
+		if ( $wgGUOnlyActualUser ) {
+			if ( str_replace( "_", " ", $param1 ) != $user->getName() ) {
+				$ingroup = false;
+			}
+		}
+		
+		// If true show only in user page
 		if ( $wgGUOnlyUserPage ) {
-			
+			if ( $namespace != NS_USER && $titletext != str_replace( "_", " ", $param1 ) ) {
+				$ingroup = false;
+			}
 		}
 
 		if ( !$ingroup ) {
@@ -120,4 +136,9 @@ class ExtGetUserInfo {
 		return false;
 	}
 
+	/** We allow title to be stored in different ways **/
+	private static function allWS( $n ) {
+		return( str_replace( "_", " ", $n ) );
+	}
+	
 }
