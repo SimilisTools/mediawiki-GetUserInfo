@@ -32,7 +32,9 @@ class ExtGetUserInfo {
 	
 	public static function getUserInfo( $parser, $frame, $args ) {
 
-		global $wgUser, $wgGUAllowedGroups, $wgGUWhiteListPages;
+		global $wgUser;
+		global $wgGUAllowedGroups, $wgGUWhiteListPages, $wgGUWhiteListNS;
+		global $wgGUOnlyActualUser, $wgGUOnlyUserPage;
 		
 		if ( isset( $args[0] ) ) {
 			$param1 = trim( $frame->expand( $args[0] ) );
@@ -72,6 +74,10 @@ class ExtGetUserInfo {
 			$ingroup = true;
 		}
 
+		// If show only in user page
+		if ( $wgGUOnlyUserPage ) {
+			
+		}
 
 		if ( !$ingroup ) {
 			return false;
