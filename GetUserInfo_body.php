@@ -51,6 +51,7 @@ class ExtGetUserInfo {
 		$parser->disableCache();
 		
 		$user = $wgUser;
+		// TODO: Check for maintenace mode
 
 		// Get title and NS of page
 		$titlepage = $parser->getTitle();
