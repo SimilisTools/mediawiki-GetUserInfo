@@ -36,6 +36,8 @@ class ExtGetUserInfo {
 		global $wgGUAllowedGroups, $wgGUWhiteListPages, $wgGUWhiteListNS;
 		global $wgGUOnlyActualUser, $wgGUOnlyUserPage;
 		
+		$parser->disableCache();
+
 		if ( isset( $args[0] ) ) {
 			$param1 = trim( $frame->expand( $args[0] ) );
 		} else {
@@ -47,14 +49,12 @@ class ExtGetUserInfo {
 		if ( isset( $args[1] ) ) {
 			$param2 = trim( $frame->expand( $args[1] ) );
 
-			// Fix problem with existing values
+			// Fix problem with existing values -> Values maybe other place
 			if ( ! in_array( array( 'email', 'realname', 'groups' ), $param2 ) ) {
 				$param2 = "email";
 			}
 		}
-		
-		$parser->disableCache();
-		
+				
 		$user = $wgUser;
 		// TODO: Check for maintenace mode
 
