@@ -46,6 +46,11 @@ class ExtGetUserInfo {
 		
 		if ( isset( $args[1] ) ) {
 			$param2 = trim( $frame->expand( $args[1] ) );
+
+			// Fix problem with existing values
+			if ( ! in_array( array( 'email', 'realname', 'groups' ), $param2 ) ) {
+				$param2 = "email";
+			}
 		}
 		
 		$parser->disableCache();
