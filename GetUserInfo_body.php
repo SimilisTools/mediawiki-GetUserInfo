@@ -50,7 +50,7 @@ class ExtGetUserInfo {
 			$param2 = trim( $frame->expand( $args[1] ) );
 
 			// Fix problem with existing values -> Values maybe other place
-			if ( ! in_array( array( 'email', 'realname', 'groups' ), $param2 ) ) {
+			if ( ! in_array( $param2, array( 'email', 'realname', 'groups' ) ) ) {
 				$param2 = "email";
 			}
 		}
